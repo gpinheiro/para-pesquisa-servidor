@@ -1,0 +1,13 @@
+User.create!(username: "apiuser", password: "apipass", password_confirmation: "apipass", name: "API Guy", role: "api")
+User.create!(username: "moduser", password: "modpass", password_confirmation: "modpass", name: "MOD Guy", role: "mod")
+sample_user = User.create!(username: "agentuser", password: "agentpass", password_confirmation: "agentpass", name: "Guy Guy", role: "agent")
+
+sample_form = Form.create!(name: "Formulario de teste", subtitle: "Bla bla bla bla bla bla bla bla", quota: 5, restricted_to_users: true)
+section = sample_form.sections.create!(name: "First page")
+section.fields << TextField.create!(label: "Campo de texto obrigatório", description: "Bla bla bla bla bla bla bla", identifier: true)
+section.fields << NumberField.create!(label: "How much is it?", required: true, range: [9000, 9001])
+section.fields << EmailField.create!(label: "Meru desu")
+section.fields << PrivateField.create!(label: "Por alguma razão você não verá o que está sendo digitado. Magic?")
+section.fields << DatetimeField.create!(label: "Que passas?")
+section.fields << UrlField.create!(label: "Pronde vás?")
+section.fields << RadioField.create!(label: "És astuto?", options: [{:label => "Si", :value => "of_course"},{:label => "Nai", :value => "yoshi"}])
