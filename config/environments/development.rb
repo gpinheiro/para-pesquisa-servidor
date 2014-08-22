@@ -28,4 +28,6 @@ UppServer::Application.configure do
   config.assets.debug = true
 
   config.cache_store = :redis_store, ENV['REDIS_SESSION_URI'] || 'redis://localhost:6379/0/session'
+
+  config.gem "newrelic_rpm"
 end

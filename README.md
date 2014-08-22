@@ -184,6 +184,41 @@ arquivos estáticos da API e Painel Administrativo.
 
     sudo apt-get install -y nginx
 
+
+Para que o nginx seja usado como proxy reverso ao servidor unicorn da API, uma
+entrada como a seguinte poderia ser utilizada em `/etc/nginx/sites-enabled/para-pesquisa-api`.
+
+      upstream unicorn_server {
+       server 127.0.0.1:8080 fail_timeout=0;
+       fail_timeout=0;
+      }
+
+      server {
+        listen 80;
+        client_max_body_size 4G;
+        server_name api.meu-para-pesquisa.org.br;
+        keepalive_timeout 5;
+
+        root /home/para-pesquisa/para-pesquisa-api/public;
+
+        location / {
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header Host $http_host;
+          proxy_redirect off;
+
+          if (!-f $request_filename) {
+            proxy_pass http://unicorn_server;
+            break;
+          }
+        }
+
+        error_page 500 502 503 504 /500.html;
+        location = /500.html {
+          root /home/para-pesquisa/para-pesquisa-api/public;
+        }
+      }
+
+
 #### Baixe o painel administrativo
 
 O Painel Administrativo é um aplicativo HTML5 que permite você gerenciar a
@@ -193,3 +228,18 @@ criados e dados são exportados.
     cd /home/para-pesquisa
     git clone https://github.com/LaFabbrica/para-pesquisa-painel
 
+A partir deste ponto basta criar uma entrada no nginx para que sirva os arquivos do painel da pasta `app`.
+ O seguinte exemplo poderia ser utilizado em `/etc/nginx/sites-enabled/para-pesquisa-painel`:
+
+    server {
+            listen 80;
+            server_name meu-para-pesquisa.org.br;
+            root /home/para-pesquisa-painel/app;
+            index index.html;
+    }
+
+## Exportação de dados
+Um documento com instruções para exportação de dados pode ser encontrado na pasta `docs` deste repositório.
+
+## Licença
+O Para Pesquisa é disponibilizado sobre a licença de código fonte aberto GNU GPL versão 2. Uma cópia pode ser encontrada na integra no arquivo LICENSE deste repositório.

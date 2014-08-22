@@ -4,15 +4,19 @@ class StatisticsController < ApplicationController
   def global
     submissions = Submission.all
 
-    statistics = Hash[Submission::STATUS.map do |status|
-      [status, submissions.where(:status => status).count] unless status == 'new'
-    end]
+    if submissions
+      statistics = Hash[Submission::STATUS.map do |status|
+        [status, submissions.where(:status => status).count] unless status == 'new'
+      end]
 
-    statistics['total_filled'] = submissions.where('status != ?', 'new').count
-    statistics['total'] = submissions.count
+      statistics['total_filled'] = submissions.where('status != ?', 'new').count
+      statistics['total'] = submissions.count
 
-    statistics['form_count'] = Form.count
-    statistics['user_count'] = User.count
+      statistics['form_count'] = Form.count
+      statistics['user_count'] = User.count
+    else
+      statistics = {'total_filled' => 0, 'total' => 0, 'form_count' => 0, 'user_count' => 0}
+    end
 
     expose statistics
   end

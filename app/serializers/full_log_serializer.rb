@@ -4,7 +4,9 @@ class FullLogSerializer < ActiveModel::Serializer
   has_one :stop_reason
 
   def target_id
-    object.submission.id
+    if object.submission
+      object.submission.id
+    end
   end
 
   def form
